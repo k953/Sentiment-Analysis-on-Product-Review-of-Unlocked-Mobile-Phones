@@ -138,5 +138,6 @@ Compare with BERT / DistilBERT fine-tuning
 
 Deploy as a web app using Streamlit
 
+<img width="911" height="542" alt="Screenshot from 2025-11-04 19-18-50" src="https://github.com/user-attachments/assets/75c45a47-2444-4808-9954-7fa35d637934" />
 
 

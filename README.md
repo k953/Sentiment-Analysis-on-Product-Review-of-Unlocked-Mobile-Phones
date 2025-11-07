@@ -64,171 +64,236 @@ These plots help understand data imbalance and review patterns.
 df = df.sample(frac=0.1, random_state=0)
 
 
+✅ Drop Missing Values
+df.dropna(inplace=True)
 
+✅ Remove Neutral Reviews
+df = df[df['Rating'] != 3]
 
-Amazon Customer Sentiment Analysis
+✅ Sentiment Encoding
+df['Sentiment'] = np.where(df['Rating'] > 3, 1, 0)
 
-Machine Learning, Word2Vec, and LSTM Based NLP Project
+✅ Train/Test Split
+train_test_split(df['Reviews'], df['Sentiment'], test_size=0.1)
 
-1. Project Overview
+✅ 5. Text Preprocessing
 
-This project performs sentiment analysis on Amazon mobile product reviews.
-The objective is to classify each review as Positive or Negative using multiple NLP approaches:
+A custom cleaning function performs:
 
-Data Exploration and Visualization
-
-Text Preprocessing and Cleaning
-
-Machine Learning Model (Naive Bayes)
-
-Word2Vec Embeddings
-
-LSTM Deep Learning Models
-
-WordCloud Visualization
-
-The final LSTM using Word2Vec embeddings achieves 94.40 percent accuracy.
-
-2. Dataset
-
-Dataset used: Amazon Unlocked Mobile Reviews (from Kaggle)
-
-Key statistics
-Total Reviews: 413840
-Total Brands: 385
-Unique Products: 4410
-Neutral Reviews (rating = 3) were removed
-Sentiment Labels
-Rating 4 and 5 = Positive (1)
-Rating 1 and 2 = Negative (0)
-
-3. Data Exploration
-
-Summary statistics of Price, Rating, and Review Votes were generated.
-Rating distribution, top brands, top products, and review length distribution were visualized.
-
-Insights
-More than 68 percent reviews are positive
-Around 23 percent reviews are negative
-Only 7 percent reviews are neutral
-
-4. Data Preparation
-
-Steps
-
-Optional 10 percent sampling
-
-Remove missing values
-
-Remove neutral reviews (rating = 3)
-
-Encode sentiment (positive = 1, negative = 0)
-
-Train test split using 90 percent train and 10 percent test
-
-5. Text Preprocessing
-
-A custom text cleaning function was used to perform
 HTML removal
+
 Special character removal
+
 Lowercasing
-Stopwords removal
+
+Stopword removal
+
+Snowball stemming
+
+
+
+
+📱 Amazon Customer Sentiment Analysis
+✅ Machine Learning + Word2Vec + LSTM (Complete NLP Pipeline)
+
+This project analyzes Amazon mobile product reviews and predicts whether the customer sentiment is Positive or Negative using multiple NLP techniques including CountVectorizer, Naive Bayes, Word2Vec, and LSTM Deep Learning models.
+
+✅ 1. Project Overview
+
+Customer reviews provide valuable signals about product quality, user experience, brand satisfaction, and overall trust.
+This project builds an end-to-end sentiment analysis pipeline that includes:
+
+✅ Extensive Data Exploration
+
+✅ Data Cleaning & Text Preprocessing
+
+✅ Machine Learning using Naive Bayes
+
+✅ Word Embeddings using Word2Vec
+
+✅ Deep Learning (LSTM & LSTM with Word2Vec)
+
+✅ WordCloud Visualizations
+
+The final LSTM + Word2Vec model achieves 94.40% accuracy, making it the best-performing approach.
+
+✅ 2. Dataset
+
+Dataset used: Amazon Unlocked Mobile Reviews (Kaggle)
+
+📊 Dataset Stats
+
+Total Reviews: 413,840
+
+Total Brands: 385
+
+Unique Products: 4,410
+
+Columns: Product Name, Brand, Price, Rating, Reviews, Votes
+
+✅ Sentiment Mapping
+Rating	Sentiment	Meaning
+1–2	Negative (0)	Bad product experience
+3	Neutral	Removed from dataset
+4–5	Positive (1)	Good product experience
+
+Neutral reviews (Rating = 3) were removed for clear binary classification.
+
+✅ 3. Data Exploration (EDA)
+📌 Summary Statistics
+
+Average Price: $226.86
+
+Average Rating: 3.81
+
+Review Votes range: 0 to 645
+
+📈 EDA Visualizations
+
+Distribution of ratings
+
+Top 20 brands with most reviews
+
+Top 50 most reviewed products
+
+Distribution of review lengths
+
+These help understand imbalance and user reviewing behavior.
+
+✅ 4. Data Preparation
+✅ Sampling (Optional)
+df = df.sample(frac=0.1, random_state=0)
+
+✅ Removing Missing & Neutral Data
+df.dropna(inplace=True)
+df = df[df['Rating'] != 3]
+
+✅ Encoding Sentiment
+df['Sentiment'] = np.where(df['Rating'] > 3, 1, 0)
+
+✅ Train-Test Split
+X_train, X_test, y_train, y_test = train_test_split(
+    df['Reviews'], df['Sentiment'], test_size=0.1, random_state=0
+)
+
+✅ 5. Text Preprocessing
+
+A custom cleaning function was used for:
+
+Removing HTML
+
+Removing non-alphabet characters
+
+Lowercasing
+
+Removing stopwords
+
 Stemming using Snowball Stemmer
 
-Both training and testing reviews were cleaned using this function.
+✅ Text Cleaning Example
+cleanText(raw_text)
 
-6. Machine Learning Model
+✅ 6. Machine Learning Model (Baseline)
+🎯 CountVectorizer + Multinomial Naive Bayes
+✅ Vectorization
+countVect = CountVectorizer()
+X_train_vec = countVect.fit_transform(X_train_cleaned)
 
-CountVectorizer with Multinomial Naive Bayes
+✅ Model Training
+mnb = MultinomialNB()
+mnb.fit(X_train_vec, y_train)
 
-Steps
+✅ Evaluation Results
 
-Convert text into bag of words using CountVectorizer
+Accuracy: 91.84%
 
-Train MultinomialNB classifier
-
-Evaluate on test set
-
-Results
-Accuracy: 91.84 percent
 AUC Score: 0.879
-F1 scores indicate strong performance on positive sentiment
 
-7. Word2Vec Embedding
+Well-performing baseline
 
-Reviews were split into sentences using NLTK tokenizer
+✅ 7. Word2Vec Embeddings
+✅ Sentence Tokenization
+sentences = tokenizer.tokenize(review)
 
-Word2Vec model trained with
-Vector size = 300
-Window = 10
-Minimum word count = 10
+✅ Training Word2Vec
+w2v = Word2Vec(size=300, window=10, min_count=10)
 
-Vocabulary size generated = 4016 words
+✅ Vocabulary Size
 
-Average Word2Vec embedding was computed for each review
-Resulting feature dimension = 300
+4016 words
 
-8. Deep Learning Models
-Model 1: LSTM with Keras Embedding
+✅ Convert Each Review → 300-Dimensional Vector
+makeFeatureVec(review, model, 300)
 
-Tokenizer and padded sequences were created
-LSTM architecture used
-Embedding layer
-LSTM layer
-Dense output layer with softmax
+✅ 8. Deep Learning Models
+⭐ Model 1: LSTM with Keras Embedding
+✅ Tokenization + Padding
+tokenizer = Tokenizer(num_words=20000)
+pad_sequences(sequences, maxlen=100)
 
-Result
-Accuracy: 94.14 percent
+✅ LSTM Architecture
+model = Sequential()
+model.add(Embedding(20000, 128))
+model.add(LSTM(128))
+model.add(Dense(2, activation="softmax"))
 
-Model 2: LSTM with Word2Vec Embedding
+✅ Accuracy
 
-Steps
+✅ 94.14%
 
-Load trained Word2Vec matrix
+⭐ Model 2: LSTM with Word2Vec Embedding (Best Model)
+✅ Embedding Loaded from Word2Vec
+Embedding(vocab_size, 300, weights=[embedding_matrix])
 
-Use it as weights for embedding layer
+✅ Accuracy
 
-Build LSTM model
+✅ 94.40%
 
-Train and evaluate
+This is the best-performing model.
 
-Result
-Accuracy: 94.40 percent (best performing model)
+✅ 9. WordCloud Visualization
 
-9. WordCloud Visualization
+Brand-wise & sentiment-wise keyword clouds created using:
 
-Brand wise sentiment word clouds were created.
-Example: Apple positive sentiment word cloud.
+create_word_cloud(brand='Apple', sentiment=1)
 
-10. Final Model Comparison
 
-Naive Bayes (CountVectorizer) = 91.84 percent
-LSTM (Keras embedding) = 94.14 percent
-LSTM with Word2Vec embedding = 94.40 percent
+Example insights:
+Apple positive reviews include: great, fast, quality, love.
 
-11. Key Takeaways
-
-Deep learning models outperform traditional ML models
-Word2Vec improves semantic understanding of text
-Amazon reviews dataset is highly imbalanced toward positive reviews
-LSTM is effective for long text sentiment understanding
-
-12. Technologies Used
+✅ 10. Final Performance Summary
+Model	Technique	Accuracy
+Naive Bayes	CountVectorizer	91.84%
+LSTM	Keras Embedding	94.14%
+LSTM + Word2Vec	Custom Embedding	⭐ 94.40%
+✅ 11. Technologies Used
 
 Python
-Pandas
-NumPy
-NLTK
+
+Pandas, NumPy
+
 BeautifulSoup
-Scikit Learn
-Gensim Word2Vec
-TensorFlow Keras
-Matplotlib and Seaborn
-WordCloud library
 
-13. Future Improvements
+NLTK
 
-Use transformer models like BERT or RoBERTa
-Multi class sentiment prediction (ratings 1 to 5)
-Real time sentiment dashboard
-Brand wise recommendation engine
+Scikit-Learn
+
+Gensim (Word2Vec)
+
+TensorFlow / Keras
+
+Matplotlib
+
+Seaborn
+
+WordCloud
+
+✅ 12. Future Enhancements
+
+Add BERT / RoBERTa transformer models
+
+Build live sentiment dashboard
+
+Product recommendation based on sentiment
+
+Multi-class rating prediction (1–5 stars)

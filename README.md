@@ -1,221 +1,234 @@
-📱 Amazon Mobile Reviews — Sentiment Analysis using Word2Vec + LSTM
-🎯 Project Overview
+# 📱 Amazon Customer Sentiment Analysis  
+### ✅ Machine Learning + Word2Vec + LSTM (Complete NLP Pipeline)
 
-This project performs Sentiment Analysis on Amazon Unlocked Mobile Reviews using both classical machine learning (Naive Bayes) and deep learning (LSTM with Word2Vec embeddings).
-It predicts whether a review expresses positive or negative sentiment based on the text.
+This project analyzes **Amazon mobile product reviews** and predicts whether the customer sentiment is **Positive** or **Negative** using multiple NLP techniques including **CountVectorizer**, **Naive Bayes**, **Word2Vec**, and **LSTM Deep Learning models**.
 
-🧠 Objective
+---
 
-Preprocess and clean real Amazon review text
+# ✅ 1. Project Overview
 
-Train Word2Vec embeddings to capture semantic meaning of words
+Customer reviews contain valuable signals about **product quality, brand perception, and user satisfaction**.  
+This project builds an **end-to-end sentiment analysis system** with:
 
-Build an LSTM network to learn sequential sentiment patterns
+- ✅ Extensive Data Exploration  
+- ✅ Data Cleaning & Preprocessing  
+- ✅ Machine Learning (Naive Bayes)  
+- ✅ Word Embeddings (Word2Vec)  
+- ✅ Deep Learning (LSTM, LSTM + Word2Vec)  
+- ✅ WordCloud visualization  
 
-Evaluate and visualize results with accuracy, confusion matrix, and word clouds
+The final LSTM + Word2Vec model achieves **94.40% accuracy**.
 
-📦 Dataset
+---
 
-Source: Amazon Unlocked Mobile Dataset (Kaggle)
+# ✅ 2. Dataset
 
-Column	Description
-Product Name	Mobile name
-Brand Name	Company (Samsung, Apple, etc.)
-Price	Product price
-Rating	User rating (1–5 stars)
-Reviews	Text review
-Review Votes	Helpful votes count
+- **Amazon Unlocked Mobile Reviews Dataset** (from Kaggle)  
+- **Total Reviews:** 413,840  
+- **Total Brands:** 385  
+- **Unique Products:** 4,410  
+- **Columns:** Product Name, Brand, Price, Rating, Reviews, Votes
 
-Size: ~4,13,000 reviews
-Language: English
+### ✅ Sentiment Distribution
+| Rating | Meaning | % |
+|--------|---------|-----|
+| 1–2 | Negative | 23.45% |
+| 3 | Neutral | 7.68% |
+| 4–5 | Positive | 68.86% |
 
-🧹 1. Data Preprocessing
-df = pd.read_csv('Amazon_Unlocked_Mobile.csv')
+Neutral reviews (Rating = 3) were removed.
 
-# Drop missing values
-df.dropna(inplace=True)
+---
 
-# Remove neutral reviews (rating == 3)
-df = df[df['Rating'] != 3]
+# ✅ 3. Data Exploration (EDA)
 
-# Encode sentiment: 1 = Positive (rating > 3), 0 = Negative (rating < 3)
-df['Sentiment'] = np.where(df['Rating'] > 3, 1, 0)
+### ✅ Summary Statistics
+- Avg Price: **$226.86**  
+- Avg Rating: **3.81**  
+- Review Votes range: **0 to 645**
 
+### ✅ Visualizations
+- Distribution of Rating  
+- Top 20 Most Reviewed Brands  
+- Top 50 Most Reviewed Products  
+- Review Length Distribution  
 
-✅ Result:
-Only positive (4–5) and negative (1–2) reviews remain.
-Example:
+These plots help understand data imbalance and review patterns.
 
-Rating	Sentiment	Example Review
-5	1	“Excellent camera and battery life!”
-1	0	“Worst phone ever, totally useless.”
-✂️ 2. Train–Test Split
-from sklearn.model_selection import train_test_split
+---
 
-X_train, X_test, y_train, y_test = train_test_split(
-    df['Reviews'], df['Sentiment'], test_size=0.1, random_state=0
-)
+# ✅ 4. Data Preparation
 
+### ✅ Sampling (optional)
+```python
+df = df.sample(frac=0.1, random_state=0)
 
-📊 Example split:
 
-Training samples: 27,799
 
-Validation samples: 3,089
 
-🧽 3. Text Cleaning
-def cleanText(raw_text):
-    text = BeautifulSoup(raw_text, 'lxml').get_text()  # Remove HTML
-    letters_only = re.sub("[^a-zA-Z]", " ", text)
-    words = letters_only.lower().split()
-    return " ".join(words)
+Amazon Customer Sentiment Analysis
 
+Machine Learning, Word2Vec, and LSTM Based NLP Project
 
-✅ Removes:
+1. Project Overview
 
-HTML tags
+This project performs sentiment analysis on Amazon mobile product reviews.
+The objective is to classify each review as Positive or Negative using multiple NLP approaches:
 
-Punctuation
+Data Exploration and Visualization
 
-Converts to lowercase
+Text Preprocessing and Cleaning
 
-Example:
+Machine Learning Model (Naive Bayes)
 
-Before: "Good product! Fast delivery :)"
-After:  "good product fast delivery"
+Word2Vec Embeddings
 
-📊 4. Baseline Model — Bag of Words + Naive Bayes
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.naive_bayes import MultinomialNB
+LSTM Deep Learning Models
 
-countVect = CountVectorizer()
-X_train_cv = countVect.fit_transform(X_train_cleaned)
-X_test_cv = countVect.transform(X_test_cleaned)
+WordCloud Visualization
 
-model_nb = MultinomialNB()
-model_nb.fit(X_train_cv, y_train)
-pred = model_nb.predict(X_test_cv)
+The final LSTM using Word2Vec embeddings achieves 94.40 percent accuracy.
 
+2. Dataset
 
-Result:
+Dataset used: Amazon Unlocked Mobile Reviews (from Kaggle)
 
-Accuracy: 91.8%
-AUC: 0.879
-F1-Score: 0.92
+Key statistics
+Total Reviews: 413840
+Total Brands: 385
+Unique Products: 4410
+Neutral Reviews (rating = 3) were removed
+Sentiment Labels
+Rating 4 and 5 = Positive (1)
+Rating 1 and 2 = Negative (0)
 
+3. Data Exploration
 
-✅ Insight: Bag-of-Words works well but doesn’t understand context.
+Summary statistics of Price, Rating, and Review Votes were generated.
+Rating distribution, top brands, top products, and review length distribution were visualized.
 
-🧩 5. Word2Vec Embeddings
+Insights
+More than 68 percent reviews are positive
+Around 23 percent reviews are negative
+Only 7 percent reviews are neutral
 
-Train Word2Vec to capture semantic similarity between words.
+4. Data Preparation
 
-from gensim.models import Word2Vec
-sentences = [review.split() for review in X_train_cleaned]
+Steps
 
-w2v = Word2Vec(sentences, size=300, window=10, min_count=10, workers=4)
-w2v.save("w2v_300features_10minwordcounts_10context")
+Optional 10 percent sampling
 
+Remove missing values
 
-📈 Vocabulary size: 4016 words
-Each word represented as a 300-dimensional vector
+Remove neutral reviews (rating = 3)
 
-Example:
+Encode sentiment (positive = 1, negative = 0)
 
-Vector("good") ≈ Vector("great")
-Vector("bad") ≈ Vector("terrible")
+Train test split using 90 percent train and 10 percent test
 
-🤖 6. Deep Learning Model — LSTM + Word2Vec
-a. Prepare Sequence Input
-tokenizer = Tokenizer(num_words=4016)
-tokenizer.fit_on_texts(X_train)
-X_train_seq = sequence.pad_sequences(tokenizer.texts_to_sequences(X_train), maxlen=100)
-X_test_seq = sequence.pad_sequences(tokenizer.texts_to_sequences(X_test), maxlen=100)
+5. Text Preprocessing
 
-b. Load Embedding Matrix
-embedding_matrix = w2v.wv.syn0
+A custom text cleaning function was used to perform
+HTML removal
+Special character removal
+Lowercasing
+Stopwords removal
+Stemming using Snowball Stemmer
 
-c. Build Model
-model = Sequential()
-model.add(Embedding(embedding_matrix.shape[0], embedding_matrix.shape[1], weights=[embedding_matrix]))
-model.add(LSTM(128, dropout=0.2, recurrent_dropout=0.2))
-model.add(Dense(2, activation='softmax'))
+Both training and testing reviews were cleaned using this function.
 
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(X_train_seq, y_train_seq, batch_size=32, epochs=3, verbose=1)
+6. Machine Learning Model
 
-d. Evaluation
-score = model.evaluate(X_test_seq, y_test_seq)
-print(f"Test Accuracy: {score[1]*100:.2f}%")
+CountVectorizer with Multinomial Naive Bayes
 
+Steps
 
-✅ Result:
-Test Accuracy: 94.4%
-Loss: 0.1597
+Convert text into bag of words using CountVectorizer
 
-🧮 7. Architecture Summary
-Layer	Output Shape	Parameters
-Embedding (Word2Vec)	(None, 100, 300)	1,204,800
-LSTM (128 units)	(None, 128)	219,648
-Dense (2)	(None, 2)	258
-Total Trainable Params	1,424,706	✅
-☁️ 8. Word Cloud Visualization
-from wordcloud import WordCloud
+Train MultinomialNB classifier
 
-def create_word_cloud(brand, sentiment):
-    df_brand = df[df['Brand Name'] == brand]
-    df_reviews = df_brand[df_brand['Sentiment']==sentiment]['Reviews']
-    text = " ".join(df_reviews.astype(str))
-    wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text)
-    plt.imshow(wordcloud, interpolation='bilinear')
-    plt.axis("off")
-    plt.show()
+Evaluate on test set
 
+Results
+Accuracy: 91.84 percent
+AUC Score: 0.879
+F1 scores indicate strong performance on positive sentiment
 
-Example:
+7. Word2Vec Embedding
 
-create_word_cloud('Apple', 1)  # Positive reviews
-create_word_cloud('Apple', 0)  # Negative reviews
+Reviews were split into sentences using NLTK tokenizer
 
+Word2Vec model trained with
+Vector size = 300
+Window = 10
+Minimum word count = 10
 
-🟢 Positive words: “great”, “love”, “camera”, “battery”
-🔴 Negative words: “bad”, “problem”, “expensive”, “slow”
+Vocabulary size generated = 4016 words
 
-🔁 9. Comparison — Models
-Model	Features	Accuracy
-Multinomial Naive Bayes	CountVectorizer	91.8%
-LSTM (Random Embedding)	128-D	94.1%
-LSTM + Word2Vec	300-D pretrained	94.4% ✅
+Average Word2Vec embedding was computed for each review
+Resulting feature dimension = 300
 
-✅ LSTM + Word2Vec learns both sequence + semantic context.
+8. Deep Learning Models
+Model 1: LSTM with Keras Embedding
 
-🧠 10. Intuitive Flow Diagram
-Raw Text → Tokenizer → Word2Vec Embedding (4016×300)
-          ↓
-       LSTM Layer (128 units)
-          ↓
-      Dense + Softmax → [Negative, Positive]
+Tokenizer and padded sequences were created
+LSTM architecture used
+Embedding layer
+LSTM layer
+Dense output layer with softmax
 
-📈 11. Results Summary
-Metric	Value
-Accuracy	94.4%
-AUC	0.93
-Loss	0.1597
-Dataset	Amazon Unlocked Mobile Reviews
-Framework	TensorFlow / Keras
-🎨 12. Visual Outputs
+Result
+Accuracy: 94.14 percent
 
-📊 Accuracy vs Epoch plot
+Model 2: LSTM with Word2Vec Embedding
 
-☁️ Word Clouds (Positive / Negative)
+Steps
 
-🔢 Confusion Matrix Heatmap
+Load trained Word2Vec matrix
 
-(Add figures if available from training logs or matplotlib outputs.)
+Use it as weights for embedding layer
 
-🧾 13. Conclusion
+Build LSTM model
 
-✅ Classical ML (Naive Bayes) gives strong baseline
-✅ Word2Vec + LSTM captures contextual word meaning
-✅ Achieves >94% accuracy on real Amazon reviews
-✅ Visualizations (WordClouds) explain sentiment trends across brands
+Train and evaluate
+
+Result
+Accuracy: 94.40 percent (best performing model)
+
+9. WordCloud Visualization
+
+Brand wise sentiment word clouds were created.
+Example: Apple positive sentiment word cloud.
+
+10. Final Model Comparison
+
+Naive Bayes (CountVectorizer) = 91.84 percent
+LSTM (Keras embedding) = 94.14 percent
+LSTM with Word2Vec embedding = 94.40 percent
+
+11. Key Takeaways
+
+Deep learning models outperform traditional ML models
+Word2Vec improves semantic understanding of text
+Amazon reviews dataset is highly imbalanced toward positive reviews
+LSTM is effective for long text sentiment understanding
+
+12. Technologies Used
+
+Python
+Pandas
+NumPy
+NLTK
+BeautifulSoup
+Scikit Learn
+Gensim Word2Vec
+TensorFlow Keras
+Matplotlib and Seaborn
+WordCloud library
+
+13. Future Improvements
+
+Use transformer models like BERT or RoBERTa
+Multi class sentiment prediction (ratings 1 to 5)
+Real time sentiment dashboard
+Brand wise recommendation engine

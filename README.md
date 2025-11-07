@@ -68,7 +68,7 @@ df = df.sample(frac=0.1, random_state=0)
 📱 Amazon Customer Sentiment Analysis
 ✅ Machine Learning + Word2Vec + LSTM (Complete NLP Pipeline)
 
-This project analyzes Amazon mobile product reviews and predicts whether the customer sentiment is Positive or Negative using multiple NLP techniques including CountVectorizer, Naive Bayes, Word2Vec, and LSTM Deep Learning models.
+This project analyzes Amazon mobile product reviews and predicts whether the customer sentiment is Positive or Negative using NLP techniques including CountVectorizer, Naive Bayes, Word2Vec, and LSTM Deep Learning models.
 
 ✅ 1. Project Overview
 
@@ -76,15 +76,10 @@ Customer reviews contain valuable signals about product quality, brand perceptio
 This project builds an end-to-end sentiment analysis system with:
 
 ✅ Extensive Data Exploration
-
 ✅ Data Cleaning & Preprocessing
-
 ✅ Machine Learning (Naive Bayes)
-
 ✅ Word Embeddings (Word2Vec)
-
 ✅ Deep Learning (LSTM, LSTM + Word2Vec)
-
 ✅ WordCloud visualization
 
 The final LSTM + Word2Vec model achieves 94.40% accuracy.
@@ -93,11 +88,8 @@ The final LSTM + Word2Vec model achieves 94.40% accuracy.
 Amazon Unlocked Mobile Reviews Dataset (from Kaggle)
 
 Total Reviews: 413,840
-
 Total Brands: 385
-
 Unique Products: 4,410
-
 Columns: Product Name, Brand, Price, Rating, Reviews, Votes
 
 ✅ Sentiment Distribution
@@ -106,144 +98,104 @@ Rating	Meaning	Percentage
 3	Neutral	7.68%
 4–5	Positive	68.86%
 
-Neutral reviews (Rating = 3) were removed.
+Neutral reviews were removed (Rating = 3).
 
 ✅ 3. Data Exploration (EDA)
 ✅ Summary Statistics
 
 Average Price: $226.86
-
 Average Rating: 3.81
+Review Votes Range: 0 to 645
 
-Review Votes range: 0 to 645
-
-✅ Visualizations Included
+✅ Visualizations
 
 Rating Distribution
-
 Top 20 Most Reviewed Brands
-
 Top 50 Most Reviewed Products
-
 Review Length Distribution
-
-These help understand data imbalance & review frequency.
 
 ✅ 4. Data Preparation
 ✅ Optional Sampling
+
 df = df.sample(frac=0.1, random_state=0)
 
 ✅ Remove Missing & Neutral Reviews
+
 df.dropna(inplace=True)
 df = df[df['Rating'] != 3]
 
 ✅ Encode Sentiment
+
 df['Sentiment'] = np.where(df['Rating'] > 3, 1, 0)
 
-✅ Train/Test Split
-train_test_split(df['Reviews'], df['Sentiment'], test_size=0.1, random_state=0)
+✅ Train-Test Split
+
+90% Train, 10% Test
 
 ✅ 5. Text Preprocessing
 
-The cleaning pipeline includes:
-
-Removing HTML
-
-Removing non-alphabet characters
-
-Converting to lowercase
-
-Removing stopwords
-
-Stemming using Snowball Stemmer
+Cleaning included:
+HTML removal
+Special character removal
+Lowercasing
+Stopwords removal
+Stemming (Snowball Stemmer)
 
 Function used:
-
 cleanText(raw_text)
 
 ✅ 6. Machine Learning Model
-🎯 CountVectorizer + Multinomial Naive Bayes
-
-✅ Convert text → Bag of Words
-✅ Train Naive Bayes classifier
-
-Results
+✅ CountVectorizer + Multinomial Naive Bayes
 
 Accuracy: 91.84%
-
 AUC Score: 0.879
 
 A strong baseline model.
 
 ✅ 7. Word2Vec Embedding
-✅ Sentence Tokenization
 
-Trained using:
+Word2Vec trained with:
+Vector Size = 300
+Window = 10
+Min Word Count = 10
 
-Word2Vec(size=300, window=10, min_count=10)
-
-✅ Vocabulary Size
-
-4016 words
-
-✅ Convert Each Review → 300-Dimensional Vector
-
-Using averaged word embeddings.
+Vocabulary Size = 4016 words
+Reviews converted to 300-dimensional vectors.
 
 ✅ 8. Deep Learning Models
-⭐ Model 1: LSTM with Keras Embedding
+⭐ LSTM with Keras Embedding
 
-Tokenization
+Accuracy: 94.14%
 
-Padding
+⭐ LSTM with Word2Vec Embedding (Best Model)
 
-LSTM architecture
+Accuracy: 94.40%
 
-✅ Accuracy: 94.14%
-⭐ Model 2: LSTM with Word2Vec Embedding (Best Model)
-
-Word2Vec embedding matrix used as weights
-
-LSTM trained on semantic vectors
-
-✅ Best Accuracy: 94.40%
 ✅ 9. WordCloud Visualization
 
-Generated positive and negative word clouds for each brand:
-
-Example:
-
+Brand-wise word clouds created using:
 create_word_cloud("Apple", sentiment=1)
 
 ✅ 10. Final Model Comparison
 Model	Technique	Accuracy
 Naive Bayes	CountVectorizer	91.84%
-LSTM	Standard Embedding	94.14%
-LSTM + Word2Vec	Custom Embedding	⭐ 94.40%
+LSTM	Keras Embedding	94.14%
+⭐ LSTM + Word2Vec	Custom Embedding	94.40%
 ✅ 11. Technologies Used
 
 Python
-
 Pandas, NumPy
-
 Scikit-Learn
-
 NLTK
-
 BeautifulSoup
-
 Gensim Word2Vec
-
 TensorFlow / Keras
-
 Matplotlib, Seaborn
-
-WordCloud library
+WordCloud
 
 ✅ 12. Future Enhancements
 
-Use Transformer Models (BERT, RoBERTa)
-
-Live Sentiment Dashboard
-
-Multi-Class Rating Prediction
+Transformer models (BERT, RoBERTa)
+Real-time sentiment dashboard
+Multi-class rating prediction
+Brand-wise recommendations
